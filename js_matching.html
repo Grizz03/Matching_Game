@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Matching Game</title>
+</head>
+
+<body onload="generateFaces()">
+    <h1>Matching Game</h1>
+    <header>
+        <div id="instructions">
+            Find the extra Astronaut on the left:
+        </div>
+        <div id="levels">
+            Level: <span class="statusNum" id="level">1</span>
+        </div>
+        <div>
+            Within <span class="statusNum" id="countdown">30</span> seconds.
+        </div>
+    </header>
+    <hr>
+    <div class="gameboard" id="leftSide"></div>
+    <div class="gameboard" id="rightSide"></div>
+    <style>
+        #levels  {
+            margin-right: 50px;
+        }
+        header {
+            display: table-row-group;
+            justify-content: space-between;
+            margin-top: 10px;
+            color:lightskyblue;
+
+        }
+        .statusNum {
+            font-size: 3em;
+            color: lightseagreen !important;
+        }
+        img {
+            width: 62px;
+            height: 82px;
+        }
+
+        h1 {
+            font-weight: bolder !important;
+            color: lightskyblue !important;
+            text-decoration:overline;
+            text-decoration-color: lightseagreen;
+            padding-left: 6px;
+            padding-right: 6px;
+            text-transform: uppercase;
+            font-size: 30px;
+        }
+
+        #instructions {
+            font-size: 19px;
+            color: lightskyblue !important;
+            text-decoration-line: underline;
+            text-decoration: underline;
+            text-decoration-color: lightseagreen;
+        }
+
+        hr {
+            height: 3px;
+            background-color: lightskyblue;
+            border: none;
+            max-width: 996px;
+            margin: 0px;
+        }
+
+        body {
+            background-image: url(space.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: lightseagreen;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        img {
+            position: absolute;
+        }
+
+        .gameboard {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+        }
+
+        #rightSide {
+            left: 500px;
+            border-left: 1px solid;
+            right: 500px;
+        border-right: 3px solid;
+        border-bottom: 3px solid;
+        }
+         #leftSide   {
+        border-left: 3px solid;
+        border-bottom: 3px solid;
+    }
+    </style>
+    <script>
+        let numberOfFaces = 3;
+        let countdown; //declared globally because it will be referenced in more than function
+        var levels = 1;
+        const TIME_GIVEN = "30";
+        const theLeftSide = document.querySelector('#leftSide');
+        const theRightSide = document.querySelector('#rightSide');
+
+        function generateFaces() {
+            for (let numberOfFaces = 0; numberOfFaces < 3; numberOfFaces++) {
+                var face = document.createElement("img");
+                face.src = 'astronaut.png';
+                var randomTop = Math.floor((Math.random() * 400) + 1);
+                var randomLeft = Math.floor((Math.random() * 400) + 1);
+                face.style.top = randomTop + 'px';
+                face.style.left = randomLeft + 'px';
+                theLeftSide.appendChild(face);
+            }
+            const leftSideImages = theLeftSide.cloneNode(true);
+            leftSideImages.removeChild(leftSideImages.lastChild);
+            theRightSide.appendChild(leftSideImages);
+
+            theLeftSide.lastChild.addEventListener('click', nextLevel);
+            document.body.addEventListener('click', gameOver);
+
+            let seconds = TIME_GIVEN;
+            countdown = setInterval(function() {
+                seconds--;
+                document.getElementById("countdown").textContent = seconds;
+                if (seconds <= -1) gameOver();
+            }, 1000);
+        }
+
+        function nextLevel() {
+            event.stopPropagation();
+            clearInterval(countdown);
+            numberOfFaces += 3;
+            levels += 1;
+            document.getElementById("countdown").textContent = TIME_GIVEN;
+            document.getElementById("level").textContent = levels;
+            generateFaces();
+        }
+
+        function gameOver() {
+            document.body.removeEventListener('click', gameOver);
+            theLeftSide.lastChild.removeEventListener('click', nextLevel);
+            clearInterval(countdown);
+          if (levels >= 0) {
+                alert('Game Over\nYou made it to level ' + levels + " !");
+            }
+            let okay = confirm('Press "Okay" to play again. Press "Cancel" to close.');
+            if (okay == true) {
+                location.reload();
+            } else {
+                alert('Suit Yourself, Goodbye..');
+                window.close();
+
+            }
+        }
+    </script>
+</body>
+
+</html>
